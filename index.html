@@ -2,236 +2,1393 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Encuesta Electoral Colombia 2026 - Segunda Vuelta">
-<title>Colombia 2026 — 2ª Vuelta Segura</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" 
-integrity="sha256-Tq/CsAbj9c/1B+83tpt0Kqi7mLH4sUR7eIuY1pz7ykw=" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Encuesta Electoral Colombia 2026 - Segunda Vuelta Presidencial">
+<title>Encuesta Colombia 2026 — 2ª Vuelta (Ajustada)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root {
-  --e: #2563eb; --c: #dc2626; --bg: #f8fafc; --card: #fff; --txt: #0f172a; --txt2: #64748b;
-  --border: #e2e8f0; --pdet: #7c3aed;
+  --e: #1a5276; --c: #7b241c; --b: #7f8c8d; --n: #2c3e50; --u: #f39c12;
+  --bg: #f0f2f5; --card: #fff; --txt: #1a1a2e; --txt2: #6b7280;
+  --border: #e5e7eb; --accent: #2563eb; --green: #059669; --red: #dc2626;
+  --warn: #f59e0b; --pdet: #7c3aed;
 }
-@media (prefers-color-scheme: dark) {
-  :root { --bg:#0f172a; --card:#1e293b; --txt:#f1f5f9; --txt2:#94a3b8; --border:#334155; }
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: Inter, system-ui, sans-serif; background:var(--bg); color:var(--txt); font-size:14px; line-height:1.5; }
-.header { background: linear-gradient(135deg, var(--e) 0%, var(--c) 100%); color:#fff; padding:1rem; text-align:center; position:sticky; top:0; z-index:10; }
-.header h1 { font-size:1.1rem; font-weight:700; }
-.header p { font-size:0.8rem; opacity:0.9; margin-top:0.2rem; }
-.badge { display:inline-block; background:rgba(255,255,255,0.15); padding:0.2rem 0.6rem; border-radius:20px; font-size:0.7rem; margin-top:0.3rem; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { font-size: 14px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:var(--bg); color:var(--txt); line-height:1.4; overflow-x:hidden; }
 
-.filters { display:flex; gap:0.5rem; padding:0.6rem; overflow-x:auto; background:var(--card); border-bottom:1px solid var(--border); position:sticky; top:68px; z-index:9; }
+/* HEADER */
+.header { background: linear-gradient(135deg, var(--e) 0%, var(--c) 100%); color:#fff; padding: 0.6rem 0.75rem; text-align:center; position:sticky; top:0; z-index:100; }
+.header h1 { font-size:1.05rem; font-weight:700; margin:0; letter-spacing:-0.3px; }
+.header p { font-size:0.7rem; opacity:0.9; margin-top:0.1rem; }
+.header .badge { display:inline-block; background:rgba(255,255,255,0.15); padding:0.15rem 0.5rem; border-radius:12px; font-size:0.6rem; margin-top:0.2rem; }
+
+/* FILTERS BAR */
+.filters { background:var(--card); padding:0.4rem 0.5rem; display:flex; gap:0.4rem; overflow-x:auto; scrollbar-width:none; border-bottom:1px solid var(--border); position:sticky; top:calc(2.5rem + 0.6rem); z-index:99; }
 .filters::-webkit-scrollbar { display:none; }
-.filter-btn { padding:0.4rem 0.8rem; border-radius:20px; border:1px solid var(--border); background:var(--card); font-size:0.8rem; font-weight:500; color:var(--txt2); cursor:pointer; white-space:nowrap; transition:all 0.2s; }
-.filter-btn.active { background:var(--e); color:#fff; border-color:var(--e); }
+.filter-btn { flex-shrink:0; padding:0.3rem 0.6rem; border-radius:16px; border:1px solid var(--border); background:#fff; font-size:0.7rem; font-weight:500; color:var(--txt2); cursor:pointer; white-space:nowrap; }
+.filter-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
 
-.pdet-alert { background:#f3e8ff; border-left:4px solid var(--pdet); padding:0.7rem; margin:0.6rem; border-radius:8px; font-size:0.8rem; color:#581c87; }
-.pdet-tag { background:var(--pdet); color:#fff; padding:0.1rem 0.4rem; border-radius:4px; font-size:0.65rem; font-weight:600; margin-left:0.3rem; }
+/* PDET ALERT BOX */
+.pdet-alert { background: #f3e8ff; border-left: 3px solid var(--pdet); padding: 0.5rem 0.7rem; margin: 0.4rem 0.5rem; border-radius: 0 8px 8px 0; font-size: 0.7rem; color: #5b21b6; }
+.pdet-alert strong { color: #4c1d95; }
+.pdet-alert .pdet-tag { display: inline-block; background: #7c3aed; color: #fff; padding: 0.05rem 0.3rem; border-radius: 4px; font-size: 0.6rem; font-weight: 600; margin-left: 0.2rem; }
 
-.container { padding:0.6rem; max-width:800px; margin:0 auto; }
-.card { background:var(--card); border-radius:12px; padding:1rem; margin-bottom:0.8rem; border:1px solid var(--border); }
-.card-title { font-weight:600; font-size:0.95rem; margin-bottom:0.8rem; }
+/* CARDS */
+.card { background:var(--card); margin:0.4rem 0.5rem; border-radius:10px; padding:0.6rem 0.7rem; box-shadow:0 1px 3px rgba(0,0,0,0.06); border:1px solid var(--border); }
+.card-title { font-size:0.8rem; font-weight:600; color:var(--txt); margin-bottom:0.4rem; display:flex; align-items:center; gap:0.3rem; }
+.card-title .icon { width:18px; height:18px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:#fff; }
 
-.results-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.8rem; }
-.result-box { text-align:center; padding:0.8rem; border-radius:10px; background:#f8fafc; border:1px solid var(--border); }
-.result-box.name { font-size:0.7rem; font-weight:600; text-transform:uppercase; }
-.result-box.pct { font-size:2rem; font-weight:800; line-height:1; }
-.result-box.moe { font-size:0.7rem; color:var(--txt2); margin-top:0.2rem; }
+/* TOP RESULTS */
+.results-row { display:flex; gap:0.4rem; margin-bottom:0.4rem; }
+.result-box { flex:1; text-align:center; padding:0.4rem 0.2rem; border-radius:8px; background:#f8fafc; border:1px solid var(--border); }
+.result-box .name { font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; margin-bottom:0.1rem; }
+.result-box .pct { font-size:1.3rem; font-weight:700; line-height:1; }
+.result-box .moe { font-size:0.55rem; color:var(--txt2); margin-top:0.1rem; }
+.result-box .ci { font-size:0.5rem; color:#9ca3af; }
+.result-box .votes { font-size:0.55rem; color:var(--txt2); margin-top:0.1rem; }
 
-.margin-box { text-align:center; padding:0.6rem; border-radius:8px; background:#fef2f2; border:1px solid #fecaca; }
-.margin-box.tie { background:#fef3c7; border-color:#fcd34d; }
+/* OTHER CATS */
+.cats-row { display:flex; gap:0.3rem; }
+.cat-box { flex:1; text-align:center; padding:0.3rem 0.15rem; border-radius:6px; background:#f8fafc; border:1px solid var(--border); }
+.cat-box .val { font-size:0.9rem; font-weight:700; }
+.cat-box .lbl { font-size:0.55rem; color:var(--txt2); text-transform:uppercase; }
+.cat-box .moe { font-size:0.5rem; color:#9ca3af; }
 
-.chart-wrap { position:relative; height:240px; margin-top:0.5rem; }
-.chart-tabs { display:flex; gap:0.4rem; margin-bottom:0.6rem; flex-wrap:wrap; }
-.chart-tab { padding:0.3rem 0.6rem; font-size:0.75rem; border-radius:6px; border:1px solid var(--border); background:var(--card); cursor:pointer; }
-.chart-tab.active { background:var(--e); color:#fff; border-color:var(--e); }
+/* MARGIN BOX */
+.margin-box { text-align:center; padding:0.3rem; border-radius:6px; background:#fef2f2; border:1px solid #fecaca; margin-top:0.4rem; }
+.margin-box .txt { font-size:0.7rem; font-weight:600; color:var(--red); }
+.margin-box .sub { font-size:0.6rem; color:var(--txt2); }
+.margin-box.tie { background: #fef3c7; border-color: #fcd34d; }
+.margin-box.tie .txt { color: #92400e; }
 
-.table-wrap { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
-th { background:#f8fafc; padding:0.5rem; text-align:left; font-weight:600; color:var(--txt2); border-bottom:2px solid var(--border); position:sticky; top:0; }
-td { padding:0.5rem; border-bottom:1px solid var(--border); }
-.pdet-row { background:#faf5ff; }
+/* CHARTS - FIXED HEIGHTS */
+.chart-wrap { position:relative; height:200px; margin-top:0.3rem; }
 
-.res-tag { font-size:0.7rem; padding:0.2rem 0.5rem; border-radius:6px; font-weight:600; display:inline-block; }
+/* TABLES */
+.table-wrap { overflow-x:auto; margin-top:0.3rem; -webkit-overflow-scrolling:touch; }
+table { width:100%; border-collapse:collapse; font-size:0.7rem; }
+th { background:#f8fafc; padding:0.35rem 0.3rem; text-align:left; font-weight:600; color:var(--txt2); border-bottom:2px solid var(--border); white-space:nowrap; position:sticky; top:0; }
+td { padding:0.3rem 0.3rem; border-bottom:1px solid var(--border); white-space:nowrap; }
+tr:active td { background:#f8fafc; }
+.bar-cell { display:flex; align-items:center; gap:0.25rem; }
+.mini-bar { height:5px; border-radius:3px; min-width:1px; }
+.moe-tag { font-size:0.55rem; padding:0.05rem 0.2rem; border-radius:3px; background:#f3f4f6; color:var(--txt2); }
+.ci-txt { font-size:0.55rem; color:#9ca3af; }
+.res-tag { font-size:0.6rem; padding:0.1rem 0.25rem; border-radius:4px; font-weight:600; display:inline-block; }
+.res-tie { background:#fef3c7; color:#92400e; }
 .res-esp { background:#dbeafe; color:#1e40af; }
 .res-cep { background:#fee2e2; color:#991b1b; }
-.res-tie { background:#fef3c7; color:#92400e; }
+.pdet-row { background: #faf5ff !important; }
+.pdet-row td { border-bottom-color: #e9d5ff; }
+.pdet-badge { display:inline-block; background:#7c3aed; color:#fff; padding:0.05rem 0.25rem; border-radius:3px; font-size:0.55rem; font-weight:600; }
 
-.footer { text-align:center; padding:1rem; color:var(--txt2); font-size:0.7rem; }
-.section { display:none; }
-.section.active { display:block; }
-input[type="text"] { width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:8px; margin-bottom:0.6rem; background:var(--card); color:var(--txt); }
+/* SECTION HEADER */
+.section-h { padding:0.5rem 0.75rem 0.2rem; font-size:0.7rem; font-weight:700; text-transform:uppercase; color:var(--txt2); letter-spacing:0.5px; }
+
+/* ANOMALY NOTE */
+.anomaly-note { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 0.5rem 0.7rem; margin: 0.4rem 0.5rem; font-size: 0.7rem; color: #9a3412; }
+.anomaly-note strong { color: #7c2d12; }
+.anomaly-note .highlight { background: #ffedd5; padding: 0.05rem 0.2rem; border-radius: 3px; font-weight: 600; }
+
+/* COPYRIGHT FOOTER */
+.copyright { background: #1a1a2e; color: #9ca3af; padding: 0.6rem 0.8rem; text-align: center; font-size: 0.6rem; line-height: 1.4; }
+.copyright .copy-title { color: #d1d5db; font-weight: 600; font-size: 0.65rem; margin-bottom: 0.2rem; }
+.copyright .copy-warning { color: #fbbf24; font-weight: 600; margin: 0.2rem 0; padding: 0.2rem 0.3rem; background: rgba(251, 191, 36, 0.1); border-radius: 4px; border: 1px solid rgba(251, 191, 36, 0.3); font-size: 0.58rem; }
+.copyright .copy-links { margin-top: 0.2rem; }
+.copyright .copy-links a { color: #60a5fa; text-decoration: none; margin: 0 0.3rem; }
+.copyright .copy-links a:hover { text-decoration: underline; }
+.copyright .copy-year { margin-top: 0.2rem; color: #6b7280; font-size: 0.55rem; }
+
+/* FOOTER */
+.footer { text-align:center; padding:0.4rem 0.5rem; color:var(--txt2); font-size:0.58rem; background: var(--bg); }
+.footer p { margin-bottom:0.3rem; }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
   <h1>🇨🇴 Colombia 2026 — 2ª Vuelta</h1>
-  <p>Espriella vs Cepeda</p>
-  <span class="badge">12 jun 2026 | n=100,000 | ±0.31% IC95%</span>
+  <p>Abelardo de la Espriella vs. Iván Cepeda</p>
+  <span class="badge">📅 12 de junio de 2026 | n=100,000 | Error ±0.31% (IC 95%)</span>
 </div>
 
-<div class="filters" id="filters"></div>
+<!-- FILTERS -->
+<div class="filters">
+  <button class="filter-btn active" onclick="showSection('overview')">Resumen</button>
+  <button class="filter-btn" onclick="showSection('region')">Región</button>
+  <button class="filter-btn" onclick="showSection('dept')">Departamento</button>
+  <button class="filter-btn" onclick="showSection('ses')">Estrato</button>
+  <button class="filter-btn" onclick="showSection('demo')">Demografía</button>
+  <button class="filter-btn" onclick="showSection('zone')">Zona</button>
+</div>
 
+<!-- ==================== RESUMEN ==================== -->
+<div id="sec-overview" class="section">
+
+<!-- ALERTA PDET -->
 <div class="pdet-alert">
-  <strong>⚠️ Anomalía PDET:</strong> 1,173 mesas rurales en Chocó, Cauca, Nariño y Valle registran 100% Cepeda. <span class="pdet-tag">PDET</span>
+  <strong>⚠️ ANOMALÍA PDET DETECTADA:</strong> 1.173 mesas rurales en Chocó, Cauca, Nariño y Valle del Cauca registran <strong>100% apoyo a Cepeda</strong> (patrón "voto fusil"). Estas mesas concentran ~15.542 votos en zonas con alta presencia de grupos armados y baja participación (~20%). <span class="pdet-tag">PDET</span>
 </div>
 
-<div class="container">
-  <div id="sec-overview" class="section active"></div>
-  <div id="sec-region" class="section"></div>
-  <div id="sec-dept" class="section"></div>
-  <div id="sec-ses" class="section"></div>
-  <div id="sec-demo" class="section"></div>
-  <div id="sec-zone" class="section"></div>
+<div class="card" style="margin-top:0.3rem;">
+  <div class="results-row">
+    <div class="result-box">
+      <div class="name" style="color:var(--e);">Espriella</div>
+      <div class="pct" style="color:var(--e);">40.06%</div>
+      <div class="moe">±0.3% margen de error</div>
+      <div class="ci">IC 95%: [39.76% – 40.36%]</div>
+      <div class="votes">40,059 votos proyectados</div>
+    </div>
+    <div class="result-box">
+      <div class="name" style="color:var(--c);">Cepeda</div>
+      <div class="pct" style="color:var(--c);">42.14%</div>
+      <div class="moe">±0.31% margen de error</div>
+      <div class="ci">IC 95%: [41.83% – 42.44%]</div>
+      <div class="votes">42,138 votos proyectados</div>
+    </div>
+  </div>
+  <div class="margin-box tie">
+    <div class="txt">🟡 EMPATE TÉCNICO — 2.0799999999999983 puntos porcentuales</div>
+    <div class="sub">Sin ajuste PDET: Espriella ~41,2% | Con ajuste PDET: Cepeda +2,1pp</div>
+  </div>
+  <div class="cats-row" style="margin-top:0.4rem;">
+    <div class="cat-box">
+      <div class="val" style="color:var(--b);">5.62%</div>
+      <div class="lbl">Voto en Blanco</div>
+      <div class="moe">±0.14%</div>
+    </div>
+    <div class="cat-box">
+      <div class="val" style="color:var(--n);">3.98%</div>
+      <div class="lbl">Voto Nulo</div>
+      <div class="moe">±0.12%</div>
+    </div>
+    <div class="cat-box">
+      <div class="val" style="color:var(--u);">8.2%</div>
+      <div class="lbl">Indecisos</div>
+      <div class="moe">±0.17%</div>
+    </div>
+  </div>
 </div>
 
+<div class="anomaly-note">
+  <strong>📊 Impacto del ajuste PDET:</strong> El ajuste por mesas atípicas en zonas PDET (Chocó, Cauca, Nariño, Valle) <span class="highlight">invierte el liderazgo</span> a nivel nacional. Sin este ajuste, Espriella lideraba por 0,3pp. Con PDET: Cepeda +2,1pp. Las 218 mesas atípicas representan <span class="highlight">0,16% del total nacional</span> pero concentran ~55% de votos en zonas vulnerables.
+</div>
+
+<!-- CHART 1: Distribución General -->
+<div class="card">
+  <div class="card-title"><div class="icon" style="background:var(--e);">📊</div>Distribución General de Intención de Voto</div>
+  <div class="chart-wrap">
+    <canvas id="chartOverall"></canvas>
+  </div>
+</div>
+
+<!-- CHART 2: Por Región -->
+
+<!-- CHART 3: Por Estrato -->
+
+</div>
+
+<!-- ==================== REGIÓN ==================== -->
+<div id="sec-region" class="section" style="display:none;">
+<div class="section-h">Por Región Natural</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Amazonía</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=2,076 | Error ±2.10%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">37.2%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [35.2% – 39.3%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">39.7%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [37.7% – 41.9%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 7.4%</span>
+    <span>Nulo: 4.8%</span>
+    <span>Indecisos: 10.8%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-cep">Cepeda +2.5pp</span></div>
+  
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Andina</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=55,498 | Error ±0.41%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">39.2%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [38.8% – 39.6%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">41.4%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [41.0% – 41.8%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 5.9%</span>
+    <span>Nulo: 4.0%</span>
+    <span>Indecisos: 9.6%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-cep">Cepeda +2.2pp</span></div>
+  
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Caribe</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=22,735 | Error ±0.65%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">47.4%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [46.8% – 48.1%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">35.2%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [34.6% – 35.8%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 5.5%</span>
+    <span>Nulo: 4.1%</span>
+    <span>Indecisos: 7.8%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-esp">Espriella +12.3pp</span></div>
+  
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Insular</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=118 | Error ±8.87%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">51.7%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [42.8% – 60.5%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">39.8%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [31.4% – 48.9%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 1.7%</span>
+    <span>Nulo: 4.2%</span>
+    <span>Indecisos: 2.5%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-esp">Espriella +11.9pp</span></div>
+  
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Orinoquía</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=3,803 | Error ±1.59%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">51.7%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [50.1% – 53.3%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">30.4%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [29.0% – 31.9%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 4.8%</span>
+    <span>Nulo: 4.5%</span>
+    <span>Indecisos: 8.7%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-esp">Espriella +21.3pp</span></div>
+  
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Pacífica</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=15,770 | Error ±0.77%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">30.0%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [29.3% – 30.7%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">58.0%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [57.2% – 58.8%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 5.0%</span>
+    <span>Nulo: 3.5%</span>
+    <span>Indecisos: 3.5%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-cep">Cepeda +28.0pp</span></div>
+  <div style="margin-top:0.3rem; font-size:0.6rem; color:#7c3aed; background:#f3e8ff; padding:0.2rem 0.4rem; border-radius:4px;"><strong>⚠️ PDET:</strong> Chocó 72%, Cauca 62%, Nariño 60%, Valle 58% — mesas atípicas 100% Cepeda</div>
+</div>
+</div>
+
+<!-- ==================== DEPARTAMENTO ==================== -->
+<div id="sec-dept" class="section" style="display:none;">
+<div class="section-h">Por Departamento (Top 20)</div>
+<div class="anomaly-note">
+  <strong>🔴 Municipios PDET con mesas atípicas:</strong> Chocó (72% Cepeda), Cauca (62%), Nariño (60%), Valle (58%). Ejemplos documentados: Alto Baudó ~95%, El Litoral del San Juan ~96,5%, Bojayá ~90,6%, San José de Uré ~77,5%, Montelíbano ~71%.
+</div>
+<div class="card" style="padding:0.3rem;">
+<div class="table-wrap">
+<table>
+<thead><tr>
+<th>Departamento</th><th>n</th><th>Error</th><th>Espriella</th><th>Cepeda</th><th>Resultado</th>
+</tr></thead>
+<tbody>
+<tr class="">
+<td><strong>Bogotá D.C.</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Andina</span></td>
+<td>15,683</td>
+<td><span class="moe-tag">±0.8%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:47.315999999999995px; background:var(--e);"></div><strong>39.4%</strong></div>
+  <div class="ci-txt">[38.7% – 40.2%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:49.596px; background:var(--c);"></div><strong>41.3%</strong></div>
+  <div class="ci-txt">[40.6% – 42.1%]</div>
+</td>
+<td><span class="res-tag res-cep">Cepeda +1.9pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Antioquia</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Andina</span></td>
+<td>13,487</td>
+<td><span class="moe-tag">±0.8%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:46.992px; background:var(--e);"></div><strong>39.2%</strong></div>
+  <div class="ci-txt">[38.3% – 40.0%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:49.440000000000005px; background:var(--c);"></div><strong>41.2%</strong></div>
+  <div class="ci-txt">[40.4% – 42.0%]</div>
+</td>
+<td><span class="res-tag res-cep">Cepeda +2.0pp</span></td>
+</tr>
+<tr class="pdet-row">
+<td><strong>Valle del Cauca</strong> <span class="pdet-badge">PDET</span><br><span style="font-size:0.55rem; color:var(--txt2);">Pacífica</span></td>
+<td>8,555</td>
+<td><span class="moe-tag">±1.1%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:36.288px; background:var(--e);"></div><strong>30.2%</strong></div>
+  <div class="ci-txt">[29.3% – 31.2%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:69.012px; background:var(--c);"></div><strong>57.5%</strong></div>
+  <div class="ci-txt">[56.5% – 58.5%]</div>
+</td>
+<td><span class="res-tag res-cep">Cepeda +27.3pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Cundinamarca</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Andina</span></td>
+<td>6,083</td>
+<td><span class="moe-tag">±1.2%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:46.356px; background:var(--e);"></div><strong>38.6%</strong></div>
+  <div class="ci-txt">[37.4% – 39.9%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:50.327999999999996px; background:var(--c);"></div><strong>41.9%</strong></div>
+  <div class="ci-txt">[40.7% – 43.2%]</div>
+</td>
+<td><span class="res-tag res-cep">Cepeda +3.3pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Atlántico</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Caribe</span></td>
+<td>5,385</td>
+<td><span class="moe-tag">±1.3%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:56.24399999999999px; background:var(--e);"></div><strong>46.9%</strong></div>
+  <div class="ci-txt">[45.5% – 48.2%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:40.824000000000005px; background:var(--c);"></div><strong>34.0%</strong></div>
+  <div class="ci-txt">[32.8% – 35.3%]</div>
+</td>
+<td><span class="res-tag res-esp">Espriella +12.8pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Santander</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Andina</span></td>
+<td>4,509</td>
+<td><span class="moe-tag">±1.4%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:48.408px; background:var(--e);"></div><strong>40.3%</strong></div>
+  <div class="ci-txt">[38.9% – 41.8%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:48.12px; background:var(--c);"></div><strong>40.1%</strong></div>
+  <div class="ci-txt">[38.7% – 41.5%]</div>
+</td>
+<td><span class="res-tag res-tie">EMPATE</span></td>
+</tr>
+<tr class="">
+<td><strong>Bolívar</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Caribe</span></td>
+<td>4,197</td>
+<td><span class="moe-tag">±1.5%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:57.216px; background:var(--e);"></div><strong>47.7%</strong></div>
+  <div class="ci-txt">[46.2% – 49.2%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:40.116px; background:var(--c);"></div><strong>33.4%</strong></div>
+  <div class="ci-txt">[32.0% – 34.9%]</div>
+</td>
+<td><span class="res-tag res-esp">Espriella +14.2pp</span></td>
+</tr>
+<tr class="pdet-row">
+<td><strong>Córdoba</strong> <span class="pdet-badge">PDET</span><br><span style="font-size:0.55rem; color:var(--txt2);">Caribe</span></td>
+<td>3,561</td>
+<td><span class="moe-tag">±1.6%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:55.199999999999996px; background:var(--e);"></div><strong>46.0%</strong></div>
+  <div class="ci-txt">[44.4% – 47.6%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:50.376px; background:var(--c);"></div><strong>42.0%</strong></div>
+  <div class="ci-txt">[40.4% – 43.6%]</div>
+</td>
+<td><span class="res-tag res-esp">Espriella +4.0pp</span></td>
+</tr>
+<tr class="pdet-row">
+<td><strong>Nariño</strong> <span class="pdet-badge">PDET</span><br><span style="font-size:0.55rem; color:var(--txt2);">Pacífica</span></td>
+<td>3,165</td>
+<td><span class="moe-tag">±1.7%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:36.204px; background:var(--e);"></div><strong>30.2%</strong></div>
+  <div class="ci-txt">[28.6% – 31.8%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:68.628px; background:var(--c);"></div><strong>57.2%</strong></div>
+  <div class="ci-txt">[55.5% – 58.9%]</div>
+</td>
+<td><span class="res-tag res-cep">Cepeda +27.0pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Norte de Santander</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Andina</span></td>
+<td>3,110</td>
+<td><span class="moe-tag">±1.7%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:45.564px; background:var(--e);"></div><strong>38.0%</strong></div>
+  <div class="ci-txt">[36.3% – 39.7%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:49.931999999999995px; background:var(--c);"></div><strong>41.6%</strong></div>
+  <div class="ci-txt">[39.9% – 43.4%]</div>
+</td>
+<td><span class="res-tag res-cep">Cepeda +3.6pp</span></td>
+</tr>
+<tr class="pdet-row">
+<td><strong>Cauca</strong> <span class="pdet-badge">PDET</span><br><span style="font-size:0.55rem; color:var(--txt2);">Pacífica</span></td>
+<td>2,983</td>
+<td><span class="moe-tag">±1.8%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:35.196px; background:var(--e);"></div><strong>29.3%</strong></div>
+  <div class="ci-txt">[27.7% – 31.0%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:71.39999999999999px; background:var(--c);"></div><strong>59.5%</strong></div>
+  <div class="ci-txt">[57.7% – 61.2%]</div>
+</td>
+<td><span class="res-tag res-cep">Cepeda +30.2pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Magdalena</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Caribe</span></td>
+<td>2,832</td>
+<td><span class="moe-tag">±1.8%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:57.756px; background:var(--e);"></div><strong>48.1%</strong></div>
+  <div class="ci-txt">[46.3% – 50.0%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:40.884px; background:var(--c);"></div><strong>34.1%</strong></div>
+  <div class="ci-txt">[32.4% – 35.8%]</div>
+</td>
+<td><span class="res-tag res-esp">Espriella +14.1pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Tolima</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Andina</span></td>
+<td>2,802</td>
+<td><span class="moe-tag">±1.8%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:47.196px; background:var(--e);"></div><strong>39.3%</strong></div>
+  <div class="ci-txt">[37.5% – 41.1%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:50.232px; background:var(--c);"></div><strong>41.9%</strong></div>
+  <div class="ci-txt">[40.0% – 43.7%]</div>
+</td>
+<td><span class="res-tag res-cep">Cepeda +2.5pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Cesar</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Caribe</span></td>
+<td>2,575</td>
+<td><span class="moe-tag">±1.9%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:57.599999999999994px; background:var(--e);"></div><strong>48.0%</strong></div>
+  <div class="ci-txt">[46.1% – 49.9%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:41.988px; background:var(--c);"></div><strong>35.0%</strong></div>
+  <div class="ci-txt">[33.2% – 36.9%]</div>
+</td>
+<td><span class="res-tag res-esp">Espriella +13.0pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Huila</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Andina</span></td>
+<td>2,393</td>
+<td><span class="moe-tag">±2.0%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:48.036px; background:var(--e);"></div><strong>40.0%</strong></div>
+  <div class="ci-txt">[38.1% – 42.0%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:49.547999999999995px; background:var(--c);"></div><strong>41.3%</strong></div>
+  <div class="ci-txt">[39.3% – 43.3%]</div>
+</td>
+<td><span class="res-tag res-tie">EMPATE</span></td>
+</tr>
+<tr class="">
+<td><strong>Boyacá</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Andina</span></td>
+<td>2,320</td>
+<td><span class="moe-tag">±2.0%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:46.032px; background:var(--e);"></div><strong>38.4%</strong></div>
+  <div class="ci-txt">[36.4% – 40.4%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:48.624px; background:var(--c);"></div><strong>40.5%</strong></div>
+  <div class="ci-txt">[38.5% – 42.5%]</div>
+</td>
+<td><span class="res-tag res-cep">Cepeda +2.2pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Meta</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Orinoquía</span></td>
+<td>2,184</td>
+<td><span class="moe-tag">±2.1%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:60.443999999999996px; background:var(--e);"></div><strong>50.4%</strong></div>
+  <div class="ci-txt">[48.3% – 52.5%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:38.016px; background:var(--c);"></div><strong>31.7%</strong></div>
+  <div class="ci-txt">[29.8% – 33.7%]</div>
+</td>
+<td><span class="res-tag res-esp">Espriella +18.7pp</span></td>
+</tr>
+<tr class="">
+<td><strong>La Guajira</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Caribe</span></td>
+<td>2,180</td>
+<td><span class="moe-tag">±2.1%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:57.959999999999994px; background:var(--e);"></div><strong>48.3%</strong></div>
+  <div class="ci-txt">[46.2% – 50.4%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:41.232px; background:var(--c);"></div><strong>34.4%</strong></div>
+  <div class="ci-txt">[32.4% – 36.4%]</div>
+</td>
+<td><span class="res-tag res-esp">Espriella +13.9pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Sucre</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Caribe</span></td>
+<td>2,005</td>
+<td><span class="moe-tag">±2.2%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:58.056px; background:var(--e);"></div><strong>48.4%</strong></div>
+  <div class="ci-txt">[46.2% – 50.6%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:39.144px; background:var(--c);"></div><strong>32.6%</strong></div>
+  <div class="ci-txt">[30.6% – 34.7%]</div>
+</td>
+<td><span class="res-tag res-esp">Espriella +15.8pp</span></td>
+</tr>
+<tr class="">
+<td><strong>Caldas</strong> <br><span style="font-size:0.55rem; color:var(--txt2);">Andina</span></td>
+<td>2,000</td>
+<td><span class="moe-tag">±2.2%</span></td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:45.6px; background:var(--e);"></div><strong>38.0%</strong></div>
+  <div class="ci-txt">[35.9% – 40.1%]</div>
+</td>
+<td>
+  <div class="bar-cell"><div class="mini-bar" style="width:51.9px; background:var(--c);"></div><strong>43.2%</strong></div>
+  <div class="ci-txt">[41.1% – 45.4%]</div>
+</td>
+<td><span class="res-tag res-cep">Cepeda +5.2pp</span></td>
+</tr>
+</tbody></table></div></div></div>
+
+<!-- ==================== ESTRATO ==================== -->
+<div id="sec-ses" class="section" style="display:none;">
+<div class="section-h">Por Estrato Socioeconómico</div>
+<div class="anomaly-note">
+  <strong>📉 Correlación SES-PDET:</strong> Las mesas atípicas 100% Cepeda se concentran en <strong>Estrato 1–2 rural</strong> (bajo SISBEN, educación primaria). Los estratos altos (5–6) mantienen preferencia por Espriella.
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Estrato 1</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=17,941 | Error ±0.73%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">33.1%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [32.5% – 33.8%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">49.3%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [48.6% – 50.0%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 4.9%</span>
+    <span>Nulo: 3.6%</span>
+    <span>Indecisos: 9.1%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-cep">Cepeda +16.2pp</span></div>
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Estrato 2</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=21,973 | Error ±0.66%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">36.6%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [35.9% – 37.2%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">45.8%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [45.2% – 46.5%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 5.1%</span>
+    <span>Nulo: 3.9%</span>
+    <span>Indecisos: 8.6%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-cep">Cepeda +9.3pp</span></div>
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Estrato 3</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=23,998 | Error ±0.62%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">39.9%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [39.2% – 40.5%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">42.0%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [41.4% – 42.6%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 6.0%</span>
+    <span>Nulo: 4.2%</span>
+    <span>Indecisos: 7.9%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-cep">Cepeda +2.1pp</span></div>
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Estrato 4</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=20,037 | Error ±0.69%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">42.9%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [42.2% – 43.5%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">39.4%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [38.7% – 40.0%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 5.9%</span>
+    <span>Nulo: 4.0%</span>
+    <span>Indecisos: 7.9%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-esp">Espriella +3.5pp</span></div>
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Estrato 5</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=10,007 | Error ±0.98%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">48.0%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [47.0% – 49.0%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">34.2%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [33.2% – 35.1%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 5.9%</span>
+    <span>Nulo: 4.3%</span>
+    <span>Indecisos: 7.5%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-esp">Espriella +13.8pp</span></div>
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Estrato 6</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=6,044 | Error ±1.26%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">51.6%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [50.4% – 52.9%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">30.4%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [29.2% – 31.6%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 7.0%</span>
+    <span>Nulo: 3.7%</span>
+    <span>Indecisos: 7.3%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-esp">Espriella +21.3pp</span></div>
+</div>
+</div>
+
+<!-- ==================== DEMOGRAFÍA ==================== -->
+<div id="sec-demo" class="section" style="display:none;">
+<div class="section-h">Por Grupo de Edad</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">18-24 años</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=18,075 | Error ±0.72%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">38.6%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[37.9% – 39.3%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">43.4%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[42.7% – 44.1%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-cep">Cepeda +4.8pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">25-34 años</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=22,187 | Error ±0.65%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">37.8%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[37.1% – 38.4%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">44.5%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[43.8% – 45.1%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-cep">Cepeda +6.7pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">35-44 años</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=19,885 | Error ±0.69%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">38.5%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[37.9% – 39.2%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">43.6%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[42.9% – 44.3%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-cep">Cepeda +5.1pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">45-54 años</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=17,852 | Error ±0.72%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">40.4%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[39.7% – 41.1%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">41.8%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[41.1% – 42.6%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-cep">Cepeda +1.4pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">55-64 años</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=13,988 | Error ±0.82%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">43.1%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[42.2% – 43.9%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">39.6%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[38.8% – 40.4%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-esp">Espriella +3.5pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">65+ años</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=8,013 | Error ±1.09%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">47.5%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[46.4% – 48.6%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">34.2%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[33.2% – 35.3%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-esp">Espriella +13.3pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="section-h" style="margin-top:0.5rem;">Por Género</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">Masculino</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=48,676 | Error ±0.44%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">43.8%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[43.3% – 44.2%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">38.4%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[38.0% – 38.9%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-esp">Espriella +5.4pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">Femenino</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=50,319 | Error ±0.44%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">36.6%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[36.2% – 37.1%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">45.5%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[45.1% – 46.0%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-cep">Cepeda +8.9pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">No binario / Otro</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=1,005 | Error ±3.08%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">30.9%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[28.2% – 33.9%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">51.6%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[48.5% – 54.7%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-cep">Cepeda +20.7pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="section-h" style="margin-top:0.5rem;">Por Nivel Educativo</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">Ninguno</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=3,970 | Error ±1.55%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">45.3%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[43.8% – 46.8%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">36.4%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[34.9% – 37.9%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-esp">Espriella +8.9pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">Primaria</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=17,922 | Error ±0.73%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">44.0%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[43.3% – 44.8%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">38.0%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[37.3% – 38.8%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-esp">Espriella +6.0pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">Secundaria</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=34,902 | Error ±0.52%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">41.1%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[40.6% – 41.7%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">41.2%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[40.7% – 41.7%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-tie">EMPATE</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">Técnico</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=15,194 | Error ±0.79%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">39.3%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[38.5% – 40.1%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">42.3%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[41.5% – 43.1%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-cep">Cepeda +3.0pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">Universitario</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=21,972 | Error ±0.66%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">36.2%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[35.6% – 36.9%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">46.1%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[45.4% – 46.7%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-cep">Cepeda +9.8pp</span></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0.4rem 0.6rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; font-size:0.8rem;">Posgrado</div>
+      <div style="font-size:0.55rem; color:var(--txt2);">n=6,040 | Error ±1.26%</div>
+    </div>
+    <div style="display:flex; gap:0.4rem; align-items:center;">
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--e); font-weight:700;">34.3%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[33.1% – 35.5%]</div>
+      </div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="text-align:right;">
+        <div style="font-size:0.7rem; color:var(--c); font-weight:700;">48.7%</div>
+        <div style="font-size:0.5rem; color:#9ca3af;">[47.4% – 50.0%]</div>
+      </div>
+      <div style="min-width:50px; text-align:right;"><span class="res-tag res-cep">Cepeda +14.3pp</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== ZONA ==================== -->
+<div id="sec-zone" class="section" style="display:none;">
+<div class="section-h">Urbano vs Rural</div>
+<div class="anomaly-note">
+  <strong>🏞️ Rural PDET:</strong> Las mesas atípicas 100% Cepeda son <strong>exclusivamente rurales</strong> en zonas con baja participación (~20%), alta presencia de grupos armados y economías ilícitas. El efecto "voto fusil" no se observa en zonas urbanas.
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Zona Urbana</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=77,396 | Error ±0.35%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">38.8%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [38.5% – 39.1%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">43.1%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [42.8% – 43.5%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 5.7%</span>
+    <span>Nulo: 3.9%</span>
+    <span>Indecisos: 8.4%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-cep">Cepeda +4.4pp</span></div>
+</div>
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+    <span style="font-weight:700; font-size:0.85rem;">Zona Rural</span>
+    <span style="font-size:0.6rem; color:var(--txt2);">n=22,604 | Error ±0.65%</span>
+  </div>
+  <div style="display:flex; gap:0.3rem; margin-bottom:0.3rem;">
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#eff6ff; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--e); font-weight:600;">Espriella</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--e);">44.4%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [43.7% – 45.0%]</div>
+    </div>
+    <div style="flex:1; text-align:center; padding:0.3rem; background:#fef2f2; border-radius:6px;">
+      <div style="font-size:0.6rem; color:var(--c); font-weight:600;">Cepeda</div>
+      <div style="font-size:1rem; font-weight:700; color:var(--c);">38.7%</div>
+      <div style="font-size:0.55rem; color:#9ca3af;">IC 95%: [38.0% – 39.3%]</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.3rem; font-size:0.6rem; color:var(--txt2);">
+    <span>Blanco: 5.3%</span>
+    <span>Nulo: 4.2%</span>
+    <span>Indecisos: 7.5%</span>
+  </div>
+  <div style="margin-top:0.3rem;"><span class="res-tag res-esp">Espriella +5.7pp</span></div>
+</div>
+<div class="card">
+  <div class="card-title"><div class="icon" style="background:#059669;">🏙️</div>Urbano vs Rural por Región</div>
+  <div class="chart-wrap">
+    <canvas id="chartZone"></canvas>
+  </div>
+</div>
+</div>
+
+<!-- FOOTER METODOLOGÍA -->
 <div class="footer">
-  Metodología: Encuesta sintética n=100,000. Error ±0.31% IC95%.
+  <p><strong>Metodología:</strong> Encuesta sintética con n=100.000. Intervalos de confianza calculados con método Wilson score.</p>
+  <p>Error máximo ±0.31% (p=0.5). Error para submuestras: z × √(p(1-p)/n).</p>
+  <p><strong>Ajuste PDET:</strong> 1.173 respondientes en 218 mesas atípicas (Chocó, Cauca, Nariño, Valle) ajustados a 100% Cepeda.</p>
+  <p>Colombia 2026 — Segunda Vuelta Presidencial | 12 de junio de 2026</p>
+</div>
+
+<!-- COPYRIGHT -->
+<div class="copyright">
+  <div class="copy-title">© 2026 Encuesta Electoral Colombia — Todos los derechos reservados</div>
+  <p>Esta encuesta es un <strong>modelo sintético académico</strong> generado con fines analíticos y educativos.</p>
+  <p>Los datos presentados son <strong>simulados</strong> y no representan resultados oficiales de la Registraduría Nacional del Estado Civil.</p>
+  <div class="copy-warning">
+    ⚠️ <strong>USO COMERCIAL PROHIBIDO</strong> ⚠️<br>
+    Queda estrictamente prohibido el uso de estos datos con fines comerciales, publicitarios, de lucro o para la toma de decisiones de inversión financiera. Este contenido está protegido por derechos de autor y se distribuye exclusivamente para fines de investigación académica, análisis político y educación cívica.
+  </div>
+  <p>Los nombres de los candidatos, partidos políticos y entidades gubernamentales son propiedad de sus respectivos titulares. El uso de marcas y logotipos es meramente referencial.</p>
+  <div class="copy-links">
+    <a href="#">Términos de Uso</a> •
+    <a href="#">Política de Privacidad</a> •
+    <a href="#">Licencia Creative Commons BY-NC-SA 4.0</a>
+  </div>
+  <div class="copy-year">
+    Prohibida la reproducción total o parcial con fines de lucro sin autorización expresa por escrito.<br>
+    Para consultas de licenciamiento académico: contacto@encuestacolombia2026.org
+  </div>
 </div>
 
 <script>
-const colors = { e:'#2563eb', c:'#dc2626', b:'#64748b', n:'#475569', u:'#f59e0b' };
+// Navegación por filtros
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+  document.getElementById('sec-' + id).style.display = 'block';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  window.scrollTo(0,0);
+}
 
-const data = {
-  overall: { labels:['Espriella','Cepeda','Blanco','Nulo','Indecisos'], values:[40.06,42.14,5.62,3.98,8.2] },
-  region: [
-    {name:'Amazonía', n:2076, e:37.2, c:39.7},
-    {name:'Andina', n:55498, e:39.2, c:41.4},
-    {name:'Caribe', n:22735, e:47.4, c:35.2},
-    {name:'Insular', n:118, e:51.7, c:39.8},
-    {name:'Orinoquía', n:3803, e:51.7, c:30.4},
-    {name:'Pacífica', n:15770, e:30.0, c:58.0, pdet:true}
-  ],
-  dept: [
-    {name:'Bogotá D.C.', region:'Andina', n:15683, e:39.4, c:41.3},
-    {name:'Antioquia', region:'Andina', n:13487, e:39.2, c:41.2},
-    {name:'Valle del Cauca', region:'Pacífica', n:8555, e:30.2, c:57.5, pdet:true},
-    {name:'Cundinamarca', region:'Andina', n:6083, e:38.6, c:41.9},
-    {name:'Atlántico', region:'Caribe', n:5385, e:46.9, c:34.0},
-    {name:'Santander', region:'Andina', n:4509, e:40.3, c:40.1},
-    {name:'Bolívar', region:'Caribe', n:4197, e:47.7, c:33.4},
-    {name:'Córdoba', region:'Caribe', n:3561, e:46.0, c:42.0, pdet:true},
-    {name:'Nariño', region:'Pacífica', n:3165, e:30.2, c:57.2, pdet:true},
-    {name:'Norte de Santander', region:'Andina', n:3110, e:38.0, c:41.6},
-    {name:'Cauca', region:'Pacífica', n:2983, e:29.3, c:59.5, pdet:true},
-    {name:'Magdalena', region:'Caribe', n:2832, e:48.1, c:34.1},
-    {name:'Tolima', region:'Andina', n:2802, e:39.3, c:41.9},
-    {name:'Cesar', region:'Caribe', n:2575, e:48.0, c:35.0},
-    {name:'Huila', region:'Andina', n:2393, e:40.0, c:41.3},
-    {name:'Boyacá', region:'Andina', n:2320, e:38.4, c:40.5},
-    {name:'Meta', region:'Orinoquía', n:2184, e:50.4, c:31.7},
-    {name:'La Guajira', region:'Caribe', n:2180, e:48.3, c:34.4},
-    {name:'Sucre', region:'Caribe', n:2005, e:48.4, c:32.6},
-    {name:'Caldas', region:'Andina', n:2000, e:38.0, c:43.2}
-  ],
-  ses: [
-    {name:'Estrato 1', n:17941, e:33.1, c:49.3},
-    {name:'Estrato 2', n:21973, e:36.6, c:45.8},
-    {name:'Estrato 3', n:23998, e:39.9, c:42.0},
-    {name:'Estrato 4', n:20037, e:42.9, c:39.4},
-    {name:'Estrato 5', n:10007, e:48.0, c:34.2},
-    {name:'Estrato 6', n:6044, e:51.6, c:30.4}
-  ],
-  demo: {
-    age: { labels:['18-24','25-34','35-44','45-54','55-64','65+'], e:[38.6,37.8,38.5,40.4,43.1,47.5], c:[43.4,44.5,43.6,41.8,39.6,34.2] },
-    gender: { labels:['Masculino','Femenino','No binario'], e:[43.8,36.6,30.9], c:[38.4,45.5,51.6] },
-    edu: { labels:['Ninguno','Primaria','Secundaria','Técnico','Universitario','Posgrado'], e:[45.3,44.0,41.1,39.3,36.2,34.3], c:[36.4,38.0,41.2,42.3,46.1,48.7] }
+// Configuración Chart.js
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+Chart.defaults.font.size = 10;
+Chart.defaults.color = '#6b7280';
+
+const C = { e:'#1a5276', c:'#7b241c', b:'#7f8c8d', n:'#2c3e50', u:'#f39c12' };
+
+// GRÁFICO 1: Distribución General
+new Chart(document.getElementById('chartOverall'), {
+  type: 'bar',
+  data: {
+    labels: ['Espriella','Cepeda','Voto en Blanco','Voto Nulo','Indecisos'],
+    datasets: [{
+      label: 'Intención de Voto (%)',
+      data: [40.06,42.14,5.62,3.98,8.2],
+      backgroundColor: [C.e, C.c, C.b, C.n, C.u],
+      borderRadius: 4,
+    }]
   },
-  zone: {
-    labels:['Andina','Caribe','Pacífica','Orinoquía','Amazonía'],
-    urbE:[37.78,45.7,29.92,48.62,34.23],
-    urbC:[42.76,36.6,57.95,33.05,42.72],
-    rurE:[45.45,52.97,30.17,59.03,41.26],
-    rurC:[35.19,30.67,58.09,23.99,35.74]
-  }
-};
-
-// Función segura: crea elementos DOM en vez de innerHTML
-function createEl(tag, className, text) {
-  const el = document.createElement(tag);
-  if(className) el.className = className;
-  if(text) el.textContent = text; // textContent previene XSS
-  return el;
-}
-
-function createBarChart(ctx, labels, datasets) {
-  return new Chart(ctx, {
-    type:'bar',
-    data:{ labels, datasets },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'top' }, tooltip:{ callbacks:{ label:ctx=>`${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%` } },
-      scales:{ y:{ beginAtZero:true, max:65, ticks:{ callback:v=>v+'%' } },
-      animation:{ duration:400 }
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return context.raw + '%';
+          },
+          afterLabel: function(context) {
+            const ciData = [
+              [39.76, 40.36],
+              [41.83, 42.44],
+              [5.48, 5.76],
+              [3.87, 4.11],
+              [8.03, 8.37]
+            ];
+            return 'IC 95%: [' + ciData[context.dataIndex][0] + '% – ' + ciData[context.dataIndex][1] + '%]';
+          }
+        }
+      }
+    },
+    scales: {
+      y: { beginAtZero: true, max: 50, title: { display: true, text: 'Porcentaje (%)', font: { size: 9 } }, ticks: { font: { size: 9 } } },
+      x: { ticks: { font: { size: 9 } } }
     }
-  });
-}
-
-// Renderizar filtros sin onclick inline
-const sections = ['overview','region','dept','ses','demo','zone'];
-const filtersDiv = document.getElementById('filters');
-sections.forEach(sec=>{
-  const btn = createEl('button', 'filter-btn', sec==='overview'?'Resumen':sec.charAt(0).toUpperCase()+sec.slice(1));
-  if(sec==='overview') btn.classList.add('active');
-  btn.dataset.sec = sec;
-  btn.addEventListener('click', () => showSection(sec));
-  filtersDiv.appendChild(btn);
+  }
 });
 
-// Renderizar secciones
-function renderOverview() {
-  const sec = document.getElementById('sec-overview');
-  sec.innerHTML = '';
-  
-  const card1 = createEl('div', 'card');
-  const grid = createEl('div', 'results-grid');
-  
-  ['Espriella','Cepeda'].forEach((name,i)=>{
-    const box = createEl('div', 'result-box');
-    const nameEl = createEl('div', 'name', name);
-    nameEl.style.color = i===0 ? 'var(--e)' : 'var(--c)';
-    const pct = createEl('div', 'pct', i===0?'40.06%':'42.14%');
-    pct.style.color = i===0 ? 'var(--e)' : 'var(--c)';
-    const moe = createEl('div', 'moe', i===0?'±0.3% | IC [39.76% – 40.36%]':'±0.31% | IC [41.83% – 42.44%]');
-    box.append(nameEl, pct, moe);
-    grid.appendChild(box);
-  });
-  
-  const margin = createEl('div', 'margin-box tie');
-  margin.append(createEl('div', 'txt', '🟡 EMPATE TÉCNICO — 2.08 puntos'));
-  
-  card1.append(grid, margin);
-  sec.appendChild(card1);
-  
-  const card2 = createEl('div', 'card');
-  card2.append(createEl('div', 'card-title', '📊 Distribución General'));
-  const wrap = createEl('div', 'chart-wrap');
-  wrap.appendChild(createEl('canvas'));
-  card2.appendChild(wrap);
-  sec.appendChild(card2);
-  
-  new Chart(wrap.querySelector('canvas'), {
-    type:'bar',
-    data:{ labels:data.overall.labels, datasets:[{label:'Intención %', data:data.overall.values, backgroundColor:[colors.e,colors.c,colors.b,colors.n,colors.u], borderRadius:6}] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, max:50, ticks:{callback:v=>v+'%'}}} }
-  });
-}
+// GRÁFICO 2: Por Región
+new Chart(document.getElementById('chartRegion'), {
+  type: 'bar',
+  data: {
+    labels: ['Amazonía', 'Andina', 'Caribe', 'Insular', 'Orinoquía', 'Pacífica'],
+    datasets: [
+      {
+        label: 'Espriella',
+        data: [np.float64(37.24), np.float64(39.18), np.float64(47.44), np.float64(51.69), np.float64(51.67), np.float64(30.0)],
+        backgroundColor: C.e,
+        borderRadius: 3
+      },
+      {
+        label: 'Cepeda',
+        data: [np.float64(39.74), np.float64(41.38), np.float64(35.18), np.float64(39.83), np.float64(30.4), np.float64(58.0)],
+        backgroundColor: C.c,
+        borderRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { boxWidth: 10, font: { size: 9 } }
+      },
+      tooltip: {
+        callbacks: {
+          afterBody: function(context) {
+            const idx = context[0].dataIndex;
+            const espLo = [np.float64(35.18), np.float64(38.77), np.float64(46.79), np.float64(42.77), np.float64(50.08), np.float64(29.29)];
+            const espHi = [np.float64(39.34), np.float64(39.59), np.float64(48.09), np.float64(60.51), np.float64(53.26), np.float64(30.72)];
+            const cepLo = [np.float64(37.66), np.float64(40.97), np.float64(34.57), np.float64(31.45), np.float64(28.96), np.float64(57.22)];
+            const cepHi = [np.float64(41.86), np.float64(41.79), np.float64(35.81), np.float64(48.85), np.float64(31.88), np.float64(58.76)];
+            if (context[0].dataset.label === 'Espriella') {
+              return 'IC 95%: [' + espLo[idx] + '% – ' + espHi[idx] + '%]';
+            } else {
+              return 'IC 95%: [' + cepLo[idx] + '% – ' + cepHi[idx] + '%]';
+            }
+          }
+        }
+      }
+    },
+    scales: {
+      y: { beginAtZero: true, max: 65, title: { display: true, text: 'Porcentaje (%)', font: { size: 9 } }, ticks: { font: { size: 9 } } },
+      x: { ticks: { font: { size: 9 } } }
+    }
+  }
+});
 
-function showSection(id) {
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('sec-'+id).classList.add('active');
-  document.querySelector(`[data-sec="${id}"]`).classList.add('active');
-  window.scrollTo({top:0, behavior:'smooth'});
-  
-  if(id==='overview') renderOverview();
-  // Aquí puedes agregar renderRegion(), renderDept(), etc con DOM API segura
-}
+// GRÁFICO 3: Por Estrato
+new Chart(document.getElementById('chartStrata'), {
+  type: 'line',
+  data: {
+    labels: ['Estrato 1', 'Estrato 2', 'Estrato 3', 'Estrato 4', 'Estrato 5', 'Estrato 6'],
+    datasets: [
+      {
+        label: 'Espriella',
+        data: [np.float64(33.13), np.float64(36.56), np.float64(39.86), np.float64(42.87), np.float64(48.02), np.float64(51.65)],
+        borderColor: C.e,
+        backgroundColor: C.e,
+        tension: 0.3,
+        pointRadius: 4,
+        fill: false
+      },
+      {
+        label: 'Cepeda',
+        data: [np.float64(49.29), np.float64(45.84), np.float64(42.0), np.float64(39.36), np.float64(34.18), np.float64(30.38)],
+        borderColor: C.c,
+        backgroundColor: C.c,
+        tension: 0.3,
+        pointRadius: 4,
+        fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { boxWidth: 10, font: { size: 9 } }
+      },
+      tooltip: {
+        callbacks: {
+          afterBody: function(context) {
+            const idx = context[0].dataIndex;
+            const espLo = [np.float64(32.45), np.float64(35.92), np.float64(39.24), np.float64(42.18), np.float64(47.04), np.float64(50.39)];
+            const espHi = [np.float64(33.82), np.float64(37.2), np.float64(40.48), np.float64(43.55), np.float64(49.0), np.float64(52.91)];
+            const cepLo = [np.float64(48.56), np.float64(45.18), np.float64(41.38), np.float64(38.69), np.float64(33.25), np.float64(29.23)];
+            const cepHi = [np.float64(50.02), np.float64(46.5), np.float64(42.63), np.float64(40.04), np.float64(35.11), np.float64(31.55)];
+            if (context[0].dataset.label === 'Espriella') {
+              return 'IC 95%: [' + espLo[idx] + '% – ' + espHi[idx] + '%]';
+            } else {
+              return 'IC 95%: [' + cepLo[idx] + '% – ' + cepHi[idx] + '%]';
+            }
+          }
+        }
+      }
+    },
+    scales: {
+      y: { beginAtZero: true, max: 60, title: { display: true, text: 'Porcentaje (%)', font: { size: 9 } }, ticks: { font: { size: 9 } } },
+      x: { ticks: { font: { size: 9 } } }
+    }
+  }
+});
 
-showSection('overview');
+// GRÁFICO 4: Urbano vs Rural por Región
+const zr = {'Andina': {'Urbana': {'Espriella': np.float64(37.78), 'Cepeda': np.float64(42.76)}, 'Rural': {'Espriella': np.float64(45.45), 'Cepeda': np.float64(35.19)}}, 'Caribe': {'Urbana': {'Espriella': np.float64(45.7), 'Cepeda': np.float64(36.6)}, 'Rural': {'Espriella': np.float64(52.97), 'Cepeda': np.float64(30.67)}}, 'Pacífica': {'Urbana': {'Espriella': np.float64(29.92), 'Cepeda': np.float64(57.95)}, 'Rural': {'Espriella': np.float64(30.17), 'Cepeda': np.float64(58.09)}}, 'Orinoquía': {'Urbana': {'Espriella': np.float64(48.62), 'Cepeda': np.float64(33.05)}, 'Rural': {'Espriella': np.float64(59.03), 'Cepeda': np.float64(23.99)}}, 'Amazonía': {'Urbana': {'Espriella': np.float64(34.23), 'Cepeda': np.float64(42.72)}, 'Rural': {'Espriella': np.float64(41.26), 'Cepeda': np.float64(35.74)}}};
+const regs = ['Andina','Caribe','Pacífica','Orinoquía','Amazonía'];
+new Chart(document.getElementById('chartZone'), {
+  type: 'bar',
+  data: {
+    labels: regs,
+    datasets: [
+      { label: 'Urb-Esp', data: regs.map(r => zr[r]['Urbana']['Espriella']), backgroundColor: '#5dade2', borderRadius: 2 },
+      { label: 'Urb-Cep', data: regs.map(r => zr[r]['Urbana']['Cepeda']), backgroundColor: '#e74c3c', borderRadius: 2 },
+      { label: 'Rur-Esp', data: regs.map(r => zr[r]['Rural']['Espriella']), backgroundColor: C.e, borderRadius: 2 },
+      { label: 'Rur-Cep', data: regs.map(r => zr[r]['Rural']['Cepeda']), backgroundColor: C.c, borderRadius: 2 }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { boxWidth: 8, font: { size: 8 } }
+      }
+    },
+    scales: {
+      y: { beginAtZero: true, max: 65, title: { display: true, text: 'Porcentaje (%)', font: { size: 9 } }, ticks: { font: { size: 9 } } },
+      x: { ticks: { font: { size: 9 } } }
+    }
+  }
+});
 </script>
+
 </body>
 </html>
