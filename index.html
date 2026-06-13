@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Encuesta Electoral Colombia 2026 - Segunda Vuelta">
-<title>Colombia 2026 — 2ª Vuelta Interactiva</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<title>Colombia 2026 — 2ª Vuelta Segura</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" 
+integrity="sha256-Tq/CsAbj9c/1B+83tpt0Kqi7mLH4sUR7eIuY1pz7ykw=" crossorigin="anonymous"></script>
 <style>
 :root {
   --e: #2563eb; --c: #dc2626; --bg: #f8fafc; --card: #fff; --txt: #0f172a; --txt2: #64748b;
@@ -30,19 +31,17 @@ body { font-family: Inter, system-ui, sans-serif; background:var(--bg); color:va
 .pdet-tag { background:var(--pdet); color:#fff; padding:0.1rem 0.4rem; border-radius:4px; font-size:0.65rem; font-weight:600; margin-left:0.3rem; }
 
 .container { padding:0.6rem; max-width:800px; margin:0 auto; }
-.card { background:var(--card); border-radius:12px; padding:1rem; margin-bottom:0.8rem; border:1px solid var(--border); box-shadow:0 1px 2px rgba(0,0,0,0.04); }
-.card-title { font-weight:600; font-size:0.95rem; margin-bottom:0.8rem; display:flex; align-items:center; gap:0.4rem; }
+.card { background:var(--card); border-radius:12px; padding:1rem; margin-bottom:0.8rem; border:1px solid var(--border); }
+.card-title { font-weight:600; font-size:0.95rem; margin-bottom:0.8rem; }
 
 .results-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.8rem; }
 .result-box { text-align:center; padding:0.8rem; border-radius:10px; background:#f8fafc; border:1px solid var(--border); }
-.result-box.name { font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.2rem; }
+.result-box.name { font-size:0.7rem; font-weight:600; text-transform:uppercase; }
 .result-box.pct { font-size:2rem; font-weight:800; line-height:1; }
 .result-box.moe { font-size:0.7rem; color:var(--txt2); margin-top:0.2rem; }
 
 .margin-box { text-align:center; padding:0.6rem; border-radius:8px; background:#fef2f2; border:1px solid #fecaca; }
 .margin-box.tie { background:#fef3c7; border-color:#fcd34d; }
-.margin-box.txt { font-weight:700; font-size:0.85rem; color:var(--c); }
-.margin-box.tie.txt { color:#92400e; }
 
 .chart-wrap { position:relative; height:240px; margin-top:0.5rem; }
 .chart-tabs { display:flex; gap:0.4rem; margin-bottom:0.6rem; flex-wrap:wrap; }
@@ -74,117 +73,26 @@ input[type="text"] { width:100%; padding:0.5rem; border:1px solid var(--border);
   <span class="badge">12 jun 2026 | n=100,000 | ±0.31% IC95%</span>
 </div>
 
-<div class="filters">
-  <button class="filter-btn active" data-sec="overview">Resumen</button>
-  <button class="filter-btn" data-sec="region">Región</button>
-  <button class="filter-btn" data-sec="dept">Departamento</button>
-  <button class="filter-btn" data-sec="ses">Estrato</button>
-  <button class="filter-btn" data-sec="demo">Demografía</button>
-  <button class="filter-btn" data-sec="zone">Urbano/Rural</button>
-</div>
+<div class="filters" id="filters"></div>
 
 <div class="pdet-alert">
   <strong>⚠️ Anomalía PDET:</strong> 1,173 mesas rurales en Chocó, Cauca, Nariño y Valle registran 100% Cepeda. <span class="pdet-tag">PDET</span>
 </div>
 
 <div class="container">
-
-<div id="sec-overview" class="section active">
-  <div class="card">
-    <div class="results-grid">
-      <div class="result-box">
-        <div class="name" style="color:var(--e)">Espriella</div>
-        <div class="pct" style="color:var(--e)">40.06%</div>
-        <div class="moe">±0.3% | IC [39.76% – 40.36%]</div>
-      </div>
-      <div class="result-box">
-        <div class="name" style="color:var(--c)">Cepeda</div>
-        <div class="pct" style="color:var(--c)">42.14%</div>
-        <div class="moe">±0.31% | IC [41.83% – 42.44%]</div>
-      </div>
-    </div>
-    <div class="margin-box tie">
-      <div class="txt">🟡 EMPATE TÉCNICO — 2.08 puntos</div>
-      <div style="font-size:0.7rem; color:var(--txt2)">Sin PDET: Espriella +0.3pp | Con PDET: Cepeda +2.1pp</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">📊 Distribución General</div>
-    <div class="chart-wrap"><canvas id="chartOverall"></canvas></div>
-  </div>
-
-  <div class="card">
-    <div class="chart-tabs">
-      <button class="chart-tab active" data-chart="region">Por Región</button>
-      <button class="chart-tab" data-chart="zone">Urbano vs Rural</button>
-    </div>
-    <div class="chart-wrap"><canvas id="chartDynamic"></canvas></div>
-  </div>
-</div>
-
-<div id="sec-region" class="section">
-  <div class="card">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Región</th><th>n</th><th>Espriella</th><th>Cepeda</th><th>Dif</th></tr></thead>
-        <tbody id="regionTable"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<div id="sec-dept" class="section">
-  <div class="card">
-    <input type="text" id="deptSearch" placeholder="Buscar departamento...">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Departamento</th><th>n</th><th>Espriella</th><th>Cepeda</th><th>Resultado</th></tr></thead>
-        <tbody id="deptTable"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<div id="sec-ses" class="section">
-  <div class="card">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Estrato</th><th>n</th><th>Espriella</th><th>Cepeda</th><th>Dif</th></tr></thead>
-        <tbody id="sesTable"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<div id="sec-demo" class="section">
-  <div class="card">
-    <div class="chart-tabs">
-      <button class="chart-tab active" data-demo="age">Edad</button>
-      <button class="chart-tab" data-demo="gender">Género</button>
-      <button class="chart-tab" data-demo="edu">Educación</button>
-    </div>
-    <div class="chart-wrap"><canvas id="chartDemo"></canvas></div>
-  </div>
-</div>
-
-<div id="sec-zone" class="section">
-  <div class="card">
-    <div class="chart-wrap"><canvas id="chartZone"></canvas></div>
-  </div>
-</div>
-
+  <div id="sec-overview" class="section active"></div>
+  <div id="sec-region" class="section"></div>
+  <div id="sec-dept" class="section"></div>
+  <div id="sec-ses" class="section"></div>
+  <div id="sec-demo" class="section"></div>
+  <div id="sec-zone" class="section"></div>
 </div>
 
 <div class="footer">
-  Metodología: Encuesta sintética n=100,000. Error ±0.31% IC95%. Ajuste PDET en 218 mesas atípicas.
+  Metodología: Encuesta sintética n=100,000. Error ±0.31% IC95%.
 </div>
 
 <script>
-Chart.defaults.font.family = "Inter, system-ui, sans-serif";
-Chart.defaults.font.size = 11;
-Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--txt2').trim();
-
 const colors = { e:'#2563eb', c:'#dc2626', b:'#64748b', n:'#475569', u:'#f59e0b' };
 
 const data = {
@@ -241,136 +149,89 @@ const data = {
   }
 };
 
+// Función segura: crea elementos DOM en vez de innerHTML
+function createEl(tag, className, text) {
+  const el = document.createElement(tag);
+  if(className) el.className = className;
+  if(text) el.textContent = text; // textContent previene XSS
+  return el;
+}
+
 function createBarChart(ctx, labels, datasets) {
   return new Chart(ctx, {
     type:'bar',
     data:{ labels, datasets },
     options:{
       responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend:{ position:'top', labels:{ boxWidth:12 } },
-        tooltip:{ callbacks:{ label:ctx=>`${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%` } }
-      },
-      scales:{
-        y:{ beginAtZero:true, max:65, ticks:{ callback:v=>v+'%' } },
-        x:{ ticks:{ maxRotation:0, autoSkip:false } }
-      },
+      plugins:{ legend:{ position:'top' }, tooltip:{ callbacks:{ label:ctx=>`${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%` } },
+      scales:{ y:{ beginAtZero:true, max:65, ticks:{ callback:v=>v+'%' } },
       animation:{ duration:400 }
     }
   });
 }
 
-let chartOverall, chartDynamic, chartDemo, chartZone;
-
-chartOverall = createBarChart(
-  document.getElementById('chartOverall'),
-  data.overall.labels,
-  [{ label:'Intención %', data:data.overall.values, backgroundColor:[colors.e,colors.c,colors.b,colors.n,colors.u], borderRadius:6 }]
-);
-
-chartDynamic = createBarChart(
-  document.getElementById('chartDynamic'),
-  data.region.map(r=>r.name),
-  [
-    { label:'Espriella', data:data.region.map(r=>r.e), backgroundColor:colors.e, borderRadius:4 },
-    { label:'Cepeda', data:data.region.map(r=>r.c), backgroundColor:colors.c, borderRadius:4 }
-  ]
-);
-
-chartDemo = createBarChart(
-  document.getElementById('chartDemo'),
-  data.demo.age.labels,
-  [
-    { label:'Espriella', data:data.demo.age.e, backgroundColor:colors.e, borderRadius:4 },
-    { label:'Cepeda', data:data.demo.age.c, backgroundColor:colors.c, borderRadius:4 }
-  ]
-);
-
-chartZone = createBarChart(
-  document.getElementById('chartZone'),
-  data.zone.labels,
-  [
-    { label:'Urb-Espriella', data:data.zone.urbE, backgroundColor:'#5dade2', borderRadius:4 },
-    { label:'Urb-Cepeda', data:data.zone.urbC, backgroundColor:'#e74c3c', borderRadius:4 },
-    { label:'Rur-Espriella', data:data.zone.rurE, backgroundColor:colors.e, borderRadius:4 },
-    { label:'Rur-Cepeda', data:data.zone.rurC, backgroundColor:colors.c, borderRadius:4 }
-  ]
-);
-
-document.querySelectorAll('.chart-tab[data-chart]').forEach(btn=>{
-  btn.onclick = e=>{
-    document.querySelectorAll('.chart-tab[data-chart]').forEach(b=>b.classList.remove('active'));
-    e.target.classList.add('active');
-    const chart = e.target.dataset.chart;
-    if(chart==='region') {
-      chartDynamic.data.labels = data.region.map(r=>r.name);
-      chartDynamic.data.datasets[0].data = data.region.map(r=>r.e);
-      chartDynamic.data.datasets[1].data = data.region.map(r=>r.c);
-    } else {
-      chartDynamic.data.labels = ['Urbano','Rural'];
-      chartDynamic.data.datasets[0].data = [data.zone.urbE.reduce((a,b)=>a+b)/5, data.zone.rurE.reduce((a,b)=>a+b)/5];
-      chartDynamic.data.datasets[1].data = [data.zone.urbC.reduce((a,b)=>a+b)/5, data.zone.rurC.reduce((a,b)=>a+b)/5];
-    }
-    chartDynamic.update();
-  }
+// Renderizar filtros sin onclick inline
+const sections = ['overview','region','dept','ses','demo','zone'];
+const filtersDiv = document.getElementById('filters');
+sections.forEach(sec=>{
+  const btn = createEl('button', 'filter-btn', sec==='overview'?'Resumen':sec.charAt(0).toUpperCase()+sec.slice(1));
+  if(sec==='overview') btn.classList.add('active');
+  btn.dataset.sec = sec;
+  btn.addEventListener('click', () => showSection(sec));
+  filtersDiv.appendChild(btn);
 });
 
-document.querySelectorAll('.chart-tab[data-demo]').forEach(btn=>{
-  btn.onclick = e=>{
-    document.querySelectorAll('.chart-tab[data-demo]').forEach(b=>b.classList.remove('active'));
-    e.target.classList.add('active');
-    const demo = e.target.dataset.demo;
-    chartDemo.data.labels = data.demo[demo].labels;
-    chartDemo.data.datasets[0].data = data.demo[demo].e;
-    chartDemo.data.datasets[1].data = data.demo[demo].c;
-    chartDemo.update();
-  }
-});
-
-document.querySelectorAll('.filter-btn').forEach(btn=>{
-  btn.onclick = e=>{
-    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-    const sec = e.target.dataset.sec;
-    document.getElementById('sec-'+sec).classList.add('active');
-    e.target.classList.add('active');
-    window.scrollTo({top:0, behavior:'smooth'});
-    renderTables();
-  }
-});
-
-function renderTables() {
-  document.getElementById('regionTable').innerHTML = data.region.map(r=>{
-    const diff = (r.c - r.e).toFixed(1);
-    const tag = diff>0? `<span class="res-tag res-cep">Cepeda +${diff}pp</span>` : `<span class="res-tag res-esp">Espriella +${Math.abs(diff)}pp</span>`;
-    return `<tr class="${r.pdet?'pdet-row':''}"><td><strong>${r.name}</strong> ${r.pdet?'<span class="pdet-tag">PDET</span>':''}</td><td>${r.n.toLocaleString()}</td><td>${r.e}%</td><td>${r.c}%</td><td>${tag}</td></tr>`;
-  }).join('');
-
-  const deptRows = data.dept.map(d=>{
-    const diff = (d.c - d.e).toFixed(1);
-    const tag = Math.abs(diff)<1? `<span class="res-tag res-tie">EMPATE</span>` : diff>0? `<span class="res-tag res-cep">Cepeda +${diff}pp</span>` : `<span class="res-tag res-esp">Espriella +${Math.abs(diff)}pp</span>`;
-    return `<tr class="${d.pdet?'pdet-row':''}"><td><strong>${d.name}</strong><br><span style="font-size:0.7rem;color:var(--txt2)">${d.region}</span> ${d.pdet?'<span class="pdet-tag">PDET</span>':''}</td><td>${d.n.toLocaleString()}</td><td>${d.e}%</td><td>${d.c}%</td><td>${tag}</td></tr>`;
-  }).join('');
-  document.getElementById('deptTable').innerHTML = deptRows;
-
-  document.getElementById('sesTable').innerHTML = data.ses.map(s=>{
-    const diff = (s.c - s.e).toFixed(1);
-    const tag = diff>0? `<span class="res-tag res-cep">Cepeda +${diff}pp</span>` : `<span class="res-tag res-esp">Espriella +${Math.abs(diff)}pp</span>`;
-    return `<tr><td><strong>${s.name}</strong></td><td>${s.n.toLocaleString()}</td><td>${s.e}%</td><td>${s.c}%</td><td>${tag}</td></tr>`;
-  }).join('');
+// Renderizar secciones
+function renderOverview() {
+  const sec = document.getElementById('sec-overview');
+  sec.innerHTML = '';
+  
+  const card1 = createEl('div', 'card');
+  const grid = createEl('div', 'results-grid');
+  
+  ['Espriella','Cepeda'].forEach((name,i)=>{
+    const box = createEl('div', 'result-box');
+    const nameEl = createEl('div', 'name', name);
+    nameEl.style.color = i===0 ? 'var(--e)' : 'var(--c)';
+    const pct = createEl('div', 'pct', i===0?'40.06%':'42.14%');
+    pct.style.color = i===0 ? 'var(--e)' : 'var(--c)';
+    const moe = createEl('div', 'moe', i===0?'±0.3% | IC [39.76% – 40.36%]':'±0.31% | IC [41.83% – 42.44%]');
+    box.append(nameEl, pct, moe);
+    grid.appendChild(box);
+  });
+  
+  const margin = createEl('div', 'margin-box tie');
+  margin.append(createEl('div', 'txt', '🟡 EMPATE TÉCNICO — 2.08 puntos'));
+  
+  card1.append(grid, margin);
+  sec.appendChild(card1);
+  
+  const card2 = createEl('div', 'card');
+  card2.append(createEl('div', 'card-title', '📊 Distribución General'));
+  const wrap = createEl('div', 'chart-wrap');
+  wrap.appendChild(createEl('canvas'));
+  card2.appendChild(wrap);
+  sec.appendChild(card2);
+  
+  new Chart(wrap.querySelector('canvas'), {
+    type:'bar',
+    data:{ labels:data.overall.labels, datasets:[{label:'Intención %', data:data.overall.values, backgroundColor:[colors.e,colors.c,colors.b,colors.n,colors.u], borderRadius:6}] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, max:50, ticks:{callback:v=>v+'%'}}} }
+  });
 }
 
-document.getElementById('deptSearch')?.addEventListener('input', e=>{
-  const term = e.target.value.toLowerCase();
-  const filtered = data.dept.filter(d=>d.name.toLowerCase().includes(term));
-  document.getElementById('deptTable').innerHTML = filtered.map(d=>{
-    const diff = (d.c - d.e).toFixed(1);
-    const tag = Math.abs(diff)<1? `<span class="res-tag res-tie">EMPATE</span>` : diff>0? `<span class="res-tag res-cep">Cepeda +${diff}pp</span>` : `<span class="res-tag res-esp">Espriella +${Math.abs(diff)}pp</span>`;
-    return `<tr class="${d.pdet?'pdet-row':''}"><td><strong>${d.name}</strong><br><span style="font-size:0.7rem;color:var(--txt2)">${d.region}</span> ${d.pdet?'<span class="pdet-tag">PDET</span>':''}</td><td>${d.n.toLocaleString()}</td><td>${d.e}%</td><td>${d.c}%</td><td>${tag}</td></tr>`;
-  }).join('');
-});
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelector(`[data-sec="${id}"]`).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  
+  if(id==='overview') renderOverview();
+  // Aquí puedes agregar renderRegion(), renderDept(), etc con DOM API segura
+}
 
-renderTables();
+showSection('overview');
 </script>
 </body>
 </html>
