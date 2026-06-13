@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Encuesta Electoral Colombia 2026 - Segunda Vuelta">
+<title>Colombia 2026 — 2ª Vuelta Interactiva</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --e: #2563eb; --c: #dc2626; --bg: #f8fafc; --card: #fff; --txt: #0f172a; --txt2: #64748b;
+  --border: #e2e8f0; --pdet: #7c3aed;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#0f172a; --card:#1e293b; --txt:#f1f5f9; --txt2:#94a3b8; --border:#334155; }
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: Inter, system-ui, sans-serif; background:var(--bg); color:var(--txt); font-size:14px; line-height:1.5; }
+.header { background: linear-gradient(135deg, var(--e) 0%, var(--c) 100%); color:#fff; padding:1rem; text-align:center; position:sticky; top:0; z-index:10; }
+.header h1 { font-size:1.1rem; font-weight:700; }
+.header p { font-size:0.8rem; opacity:0.9; margin-top:0.2rem; }
+.badge { display:inline-block; background:rgba(255,255,255,0.15); padding:0.2rem 0.6rem; border-radius:20px; font-size:0.7rem; margin-top:0.3rem; }
+
+.filters { display:flex; gap:0.5rem; padding:0.6rem; overflow-x:auto; background:var(--card); border-bottom:1px solid var(--border); position:sticky; top:68px; z-index:9; }
+.filters::-webkit-scrollbar { display:none; }
+.filter-btn { padding:0.4rem 0.8rem; border-radius:20px; border:1px solid var(--border); background:var(--card); font-size:0.8rem; font-weight:500; color:var(--txt2); cursor:pointer; white-space:nowrap; transition:all 0.2s; }
+.filter-btn.active { background:var(--e); color:#fff; border-color:var(--e); }
+
+.pdet-alert { background:#f3e8ff; border-left:4px solid var(--pdet); padding:0.7rem; margin:0.6rem; border-radius:8px; font-size:0.8rem; color:#581c87; }
+.pdet-tag { background:var(--pdet); color:#fff; padding:0.1rem 0.4rem; border-radius:4px; font-size:0.65rem; font-weight:600; margin-left:0.3rem; }
+
+.container { padding:0.6rem; max-width:800px; margin:0 auto; }
+.card { background:var(--card); border-radius:12px; padding:1rem; margin-bottom:0.8rem; border:1px solid var(--border); box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+.card-title { font-weight:600; font-size:0.95rem; margin-bottom:0.8rem; display:flex; align-items:center; gap:0.4rem; }
+
+.results-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.8rem; }
+.result-box { text-align:center; padding:0.8rem; border-radius:10px; background:#f8fafc; border:1px solid var(--border); }
+.result-box.name { font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.2rem; }
+.result-box.pct { font-size:2rem; font-weight:800; line-height:1; }
+.result-box.moe { font-size:0.7rem; color:var(--txt2); margin-top:0.2rem; }
+
+.margin-box { text-align:center; padding:0.6rem; border-radius:8px; background:#fef2f2; border:1px solid #fecaca; }
+.margin-box.tie { background:#fef3c7; border-color:#fcd34d; }
+.margin-box.txt { font-weight:700; font-size:0.85rem; color:var(--c); }
+.margin-box.tie.txt { color:#92400e; }
+
+.chart-wrap { position:relative; height:240px; margin-top:0.5rem; }
+.chart-tabs { display:flex; gap:0.4rem; margin-bottom:0.6rem; flex-wrap:wrap; }
+.chart-tab { padding:0.3rem 0.6rem; font-size:0.75rem; border-radius:6px; border:1px solid var(--border); background:var(--card); cursor:pointer; }
+.chart-tab.active { background:var(--e); color:#fff; border-color:var(--e); }
+
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+th { background:#f8fafc; padding:0.5rem; text-align:left; font-weight:600; color:var(--txt2); border-bottom:2px solid var(--border); position:sticky; top:0; }
+td { padding:0.5rem; border-bottom:1px solid var(--border); }
+.pdet-row { background:#faf5ff; }
+
+.res-tag { font-size:0.7rem; padding:0.2rem 0.5rem; border-radius:6px; font-weight:600; display:inline-block; }
+.res-esp { background:#dbeafe; color:#1e40af; }
+.res-cep { background:#fee2e2; color:#991b1b; }
+.res-tie { background:#fef3c7; color:#92400e; }
+
+.footer { text-align:center; padding:1rem; color:var(--txt2); font-size:0.7rem; }
+.section { display:none; }
+.section.active { display:block; }
+input[type="text"] { width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:8px; margin-bottom:0.6rem; background:var(--card); color:var(--txt); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🇨🇴 Colombia 2026 — 2ª Vuelta</h1>
+  <p>Espriella vs Cepeda</p>
+  <span class="badge">12 jun 2026 | n=100,000 | ±0.31% IC95%</span>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" data-sec="overview">Resumen</button>
+  <button class="filter-btn" data-sec="region">Región</button>
+  <button class="filter-btn" data-sec="dept">Departamento</button>
+  <button class="filter-btn" data-sec="ses">Estrato</button>
+  <button class="filter-btn" data-sec="demo">Demografía</button>
+  <button class="filter-btn" data-sec="zone">Urbano/Rural</button>
+</div>
+
+<div class="pdet-alert">
+  <strong>⚠️ Anomalía PDET:</strong> 1,173 mesas rurales en Chocó, Cauca, Nariño y Valle registran 100% Cepeda. <span class="pdet-tag">PDET</span>
+</div>
+
+<div class="container">
+
+<div id="sec-overview" class="section active">
+  <div class="card">
+    <div class="results-grid">
+      <div class="result-box">
+        <div class="name" style="color:var(--e)">Espriella</div>
+        <div class="pct" style="color:var(--e)">40.06%</div>
+        <div class="moe">±0.3% | IC [39.76% – 40.36%]</div>
+      </div>
+      <div class="result-box">
+        <div class="name" style="color:var(--c)">Cepeda</div>
+        <div class="pct" style="color:var(--c)">42.14%</div>
+        <div class="moe">±0.31% | IC [41.83% – 42.44%]</div>
+      </div>
+    </div>
+    <div class="margin-box tie">
+      <div class="txt">🟡 EMPATE TÉCNICO — 2.08 puntos</div>
+      <div style="font-size:0.7rem; color:var(--txt2)">Sin PDET: Espriella +0.3pp | Con PDET: Cepeda +2.1pp</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Distribución General</div>
+    <div class="chart-wrap"><canvas id="chartOverall"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="chart-tabs">
+      <button class="chart-tab active" data-chart="region">Por Región</button>
+      <button class="chart-tab" data-chart="zone">Urbano vs Rural</button>
+    </div>
+    <div class="chart-wrap"><canvas id="chartDynamic"></canvas></div>
+  </div>
+</div>
+
+<div id="sec-region" class="section">
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Región</th><th>n</th><th>Espriella</th><th>Cepeda</th><th>Dif</th></tr></thead>
+        <tbody id="regionTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="sec-dept" class="section">
+  <div class="card">
+    <input type="text" id="deptSearch" placeholder="Buscar departamento...">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Departamento</th><th>n</th><th>Espriella</th><th>Cepeda</th><th>Resultado</th></tr></thead>
+        <tbody id="deptTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="sec-ses" class="section">
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Estrato</th><th>n</th><th>Espriella</th><th>Cepeda</th><th>Dif</th></tr></thead>
+        <tbody id="sesTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="sec-demo" class="section">
+  <div class="card">
+    <div class="chart-tabs">
+      <button class="chart-tab active" data-demo="age">Edad</button>
+      <button class="chart-tab" data-demo="gender">Género</button>
+      <button class="chart-tab" data-demo="edu">Educación</button>
+    </div>
+    <div class="chart-wrap"><canvas id="chartDemo"></canvas></div>
+  </div>
+</div>
+
+<div id="sec-zone" class="section">
+  <div class="card">
+    <div class="chart-wrap"><canvas id="chartZone"></canvas></div>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  Metodología: Encuesta sintética n=100,000. Error ±0.31% IC95%. Ajuste PDET en 218 mesas atípicas.
+</div>
+
+<script>
+Chart.defaults.font.family = "Inter, system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--txt2').trim();
+
+const colors = { e:'#2563eb', c:'#dc2626', b:'#64748b', n:'#475569', u:'#f59e0b' };
+
+const data = {
+  overall: { labels:['Espriella','Cepeda','Blanco','Nulo','Indecisos'], values:[40.06,42.14,5.62,3.98,8.2] },
+  region: [
+    {name:'Amazonía', n:2076, e:37.2, c:39.7},
+    {name:'Andina', n:55498, e:39.2, c:41.4},
+    {name:'Caribe', n:22735, e:47.4, c:35.2},
+    {name:'Insular', n:118, e:51.7, c:39.8},
+    {name:'Orinoquía', n:3803, e:51.7, c:30.4},
+    {name:'Pacífica', n:15770, e:30.0, c:58.0, pdet:true}
+  ],
+  dept: [
+    {name:'Bogotá D.C.', region:'Andina', n:15683, e:39.4, c:41.3},
+    {name:'Antioquia', region:'Andina', n:13487, e:39.2, c:41.2},
+    {name:'Valle del Cauca', region:'Pacífica', n:8555, e:30.2, c:57.5, pdet:true},
+    {name:'Cundinamarca', region:'Andina', n:6083, e:38.6, c:41.9},
+    {name:'Atlántico', region:'Caribe', n:5385, e:46.9, c:34.0},
+    {name:'Santander', region:'Andina', n:4509, e:40.3, c:40.1},
+    {name:'Bolívar', region:'Caribe', n:4197, e:47.7, c:33.4},
+    {name:'Córdoba', region:'Caribe', n:3561, e:46.0, c:42.0, pdet:true},
+    {name:'Nariño', region:'Pacífica', n:3165, e:30.2, c:57.2, pdet:true},
+    {name:'Norte de Santander', region:'Andina', n:3110, e:38.0, c:41.6},
+    {name:'Cauca', region:'Pacífica', n:2983, e:29.3, c:59.5, pdet:true},
+    {name:'Magdalena', region:'Caribe', n:2832, e:48.1, c:34.1},
+    {name:'Tolima', region:'Andina', n:2802, e:39.3, c:41.9},
+    {name:'Cesar', region:'Caribe', n:2575, e:48.0, c:35.0},
+    {name:'Huila', region:'Andina', n:2393, e:40.0, c:41.3},
+    {name:'Boyacá', region:'Andina', n:2320, e:38.4, c:40.5},
+    {name:'Meta', region:'Orinoquía', n:2184, e:50.4, c:31.7},
+    {name:'La Guajira', region:'Caribe', n:2180, e:48.3, c:34.4},
+    {name:'Sucre', region:'Caribe', n:2005, e:48.4, c:32.6},
+    {name:'Caldas', region:'Andina', n:2000, e:38.0, c:43.2}
+  ],
+  ses: [
+    {name:'Estrato 1', n:17941, e:33.1, c:49.3},
+    {name:'Estrato 2', n:21973, e:36.6, c:45.8},
+    {name:'Estrato 3', n:23998, e:39.9, c:42.0},
+    {name:'Estrato 4', n:20037, e:42.9, c:39.4},
+    {name:'Estrato 5', n:10007, e:48.0, c:34.2},
+    {name:'Estrato 6', n:6044, e:51.6, c:30.4}
+  ],
+  demo: {
+    age: { labels:['18-24','25-34','35-44','45-54','55-64','65+'], e:[38.6,37.8,38.5,40.4,43.1,47.5], c:[43.4,44.5,43.6,41.8,39.6,34.2] },
+    gender: { labels:['Masculino','Femenino','No binario'], e:[43.8,36.6,30.9], c:[38.4,45.5,51.6] },
+    edu: { labels:['Ninguno','Primaria','Secundaria','Técnico','Universitario','Posgrado'], e:[45.3,44.0,41.1,39.3,36.2,34.3], c:[36.4,38.0,41.2,42.3,46.1,48.7] }
+  },
+  zone: {
+    labels:['Andina','Caribe','Pacífica','Orinoquía','Amazonía'],
+    urbE:[37.78,45.7,29.92,48.62,34.23],
+    urbC:[42.76,36.6,57.95,33.05,42.72],
+    rurE:[45.45,52.97,30.17,59.03,41.26],
+    rurC:[35.19,30.67,58.09,23.99,35.74]
+  }
+};
+
+function createBarChart(ctx, labels, datasets) {
+  return new Chart(ctx, {
+    type:'bar',
+    data:{ labels, datasets },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ position:'top', labels:{ boxWidth:12 } },
+        tooltip:{ callbacks:{ label:ctx=>`${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%` } }
+      },
+      scales:{
+        y:{ beginAtZero:true, max:65, ticks:{ callback:v=>v+'%' } },
+        x:{ ticks:{ maxRotation:0, autoSkip:false } }
+      },
+      animation:{ duration:400 }
+    }
+  });
+}
+
+let chartOverall, chartDynamic, chartDemo, chartZone;
+
+chartOverall = createBarChart(
+  document.getElementById('chartOverall'),
+  data.overall.labels,
+  [{ label:'Intención %', data:data.overall.values, backgroundColor:[colors.e,colors.c,colors.b,colors.n,colors.u], borderRadius:6 }]
+);
+
+chartDynamic = createBarChart(
+  document.getElementById('chartDynamic'),
+  data.region.map(r=>r.name),
+  [
+    { label:'Espriella', data:data.region.map(r=>r.e), backgroundColor:colors.e, borderRadius:4 },
+    { label:'Cepeda', data:data.region.map(r=>r.c), backgroundColor:colors.c, borderRadius:4 }
+  ]
+);
+
+chartDemo = createBarChart(
+  document.getElementById('chartDemo'),
+  data.demo.age.labels,
+  [
+    { label:'Espriella', data:data.demo.age.e, backgroundColor:colors.e, borderRadius:4 },
+    { label:'Cepeda', data:data.demo.age.c, backgroundColor:colors.c, borderRadius:4 }
+  ]
+);
+
+chartZone = createBarChart(
+  document.getElementById('chartZone'),
+  data.zone.labels,
+  [
+    { label:'Urb-Espriella', data:data.zone.urbE, backgroundColor:'#5dade2', borderRadius:4 },
+    { label:'Urb-Cepeda', data:data.zone.urbC, backgroundColor:'#e74c3c', borderRadius:4 },
+    { label:'Rur-Espriella', data:data.zone.rurE, backgroundColor:colors.e, borderRadius:4 },
+    { label:'Rur-Cepeda', data:data.zone.rurC, backgroundColor:colors.c, borderRadius:4 }
+  ]
+);
+
+document.querySelectorAll('.chart-tab[data-chart]').forEach(btn=>{
+  btn.onclick = e=>{
+    document.querySelectorAll('.chart-tab[data-chart]').forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    const chart = e.target.dataset.chart;
+    if(chart==='region') {
+      chartDynamic.data.labels = data.region.map(r=>r.name);
+      chartDynamic.data.datasets[0].data = data.region.map(r=>r.e);
+      chartDynamic.data.datasets[1].data = data.region.map(r=>r.c);
+    } else {
+      chartDynamic.data.labels = ['Urbano','Rural'];
+      chartDynamic.data.datasets[0].data = [data.zone.urbE.reduce((a,b)=>a+b)/5, data.zone.rurE.reduce((a,b)=>a+b)/5];
+      chartDynamic.data.datasets[1].data = [data.zone.urbC.reduce((a,b)=>a+b)/5, data.zone.rurC.reduce((a,b)=>a+b)/5];
+    }
+    chartDynamic.update();
+  }
+});
+
+document.querySelectorAll('.chart-tab[data-demo]').forEach(btn=>{
+  btn.onclick = e=>{
+    document.querySelectorAll('.chart-tab[data-demo]').forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    const demo = e.target.dataset.demo;
+    chartDemo.data.labels = data.demo[demo].labels;
+    chartDemo.data.datasets[0].data = data.demo[demo].e;
+    chartDemo.data.datasets[1].data = data.demo[demo].c;
+    chartDemo.update();
+  }
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.onclick = e=>{
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    const sec = e.target.dataset.sec;
+    document.getElementById('sec-'+sec).classList.add('active');
+    e.target.classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+    renderTables();
+  }
+});
+
+function renderTables() {
+  document.getElementById('regionTable').innerHTML = data.region.map(r=>{
+    const diff = (r.c - r.e).toFixed(1);
+    const tag = diff>0? `<span class="res-tag res-cep">Cepeda +${diff}pp</span>` : `<span class="res-tag res-esp">Espriella +${Math.abs(diff)}pp</span>`;
+    return `<tr class="${r.pdet?'pdet-row':''}"><td><strong>${r.name}</strong> ${r.pdet?'<span class="pdet-tag">PDET</span>':''}</td><td>${r.n.toLocaleString()}</td><td>${r.e}%</td><td>${r.c}%</td><td>${tag}</td></tr>`;
+  }).join('');
+
+  const deptRows = data.dept.map(d=>{
+    const diff = (d.c - d.e).toFixed(1);
+    const tag = Math.abs(diff)<1? `<span class="res-tag res-tie">EMPATE</span>` : diff>0? `<span class="res-tag res-cep">Cepeda +${diff}pp</span>` : `<span class="res-tag res-esp">Espriella +${Math.abs(diff)}pp</span>`;
+    return `<tr class="${d.pdet?'pdet-row':''}"><td><strong>${d.name}</strong><br><span style="font-size:0.7rem;color:var(--txt2)">${d.region}</span> ${d.pdet?'<span class="pdet-tag">PDET</span>':''}</td><td>${d.n.toLocaleString()}</td><td>${d.e}%</td><td>${d.c}%</td><td>${tag}</td></tr>`;
+  }).join('');
+  document.getElementById('deptTable').innerHTML = deptRows;
+
+  document.getElementById('sesTable').innerHTML = data.ses.map(s=>{
+    const diff = (s.c - s.e).toFixed(1);
+    const tag = diff>0? `<span class="res-tag res-cep">Cepeda +${diff}pp</span>` : `<span class="res-tag res-esp">Espriella +${Math.abs(diff)}pp</span>`;
+    return `<tr><td><strong>${s.name}</strong></td><td>${s.n.toLocaleString()}</td><td>${s.e}%</td><td>${s.c}%</td><td>${tag}</td></tr>`;
+  }).join('');
+}
+
+document.getElementById('deptSearch')?.addEventListener('input', e=>{
+  const term = e.target.value.toLowerCase();
+  const filtered = data.dept.filter(d=>d.name.toLowerCase().includes(term));
+  document.getElementById('deptTable').innerHTML = filtered.map(d=>{
+    const diff = (d.c - d.e).toFixed(1);
+    const tag = Math.abs(diff)<1? `<span class="res-tag res-tie">EMPATE</span>` : diff>0? `<span class="res-tag res-cep">Cepeda +${diff}pp</span>` : `<span class="res-tag res-esp">Espriella +${Math.abs(diff)}pp</span>`;
+    return `<tr class="${d.pdet?'pdet-row':''}"><td><strong>${d.name}</strong><br><span style="font-size:0.7rem;color:var(--txt2)">${d.region}</span> ${d.pdet?'<span class="pdet-tag">PDET</span>':''}</td><td>${d.n.toLocaleString()}</td><td>${d.e}%</td><td>${d.c}%</td><td>${tag}</td></tr>`;
+  }).join('');
+});
+
+renderTables();
+</script>
+</body>
+</html>
